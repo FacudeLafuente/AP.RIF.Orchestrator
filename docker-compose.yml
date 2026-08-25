@@ -1,0 +1,72 @@
+# Orchestrator dev compose — spins up any combination of repos under ./repos
+# using profiles. Reuses each repo's Dockerfile so behavior matches running
+# `docker compose up` inside each repo standalone.
+#
+# Usage:
+#   npm run docker        (all: backend + frontend)
+#   npm run docker:be     (backend only)
+#   npm run docker:fe     (frontend only)
+#
+# Migrations (backend):
+#   docker compose --profile be run --rm backend dotnet run --project AP.RTLA.Backend/AP.RTLA.Backend.csproj -- migrate
+
+name: ap-rif-orchestrator
+
+services:
+  backend:
+    build:
+      context: ./repos/AP.RTLA.Backend/AP.RTLA.Backend
+      dockerfile: Dockerfile
+    image: ap-rtla-backend:dev
+    container_name: rif-backend
+    profiles: ["all", "be"]
+    ports:
+      - "${BACKEND_PORT:-5082}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - ./repos/AP.RTLA.Backend/AP.RTLA.Backend:/src
+      - /src/AP.RTLA.Backend/bin
+      - /src/AP.RTLA.Backend/obj
+      - /src/AP.RTLA.Backend.Core/bin
+      - /src/AP.RTLA.Backend.Core/obj
+      - /src/AP.RTLA.Backend.DAL/bin
+      - /src/AP.RTLA.Backend.DAL/obj
+      - /src/AP.RTLA.Backend.Tests/bin
+      - /src/AP.RTLA.Backend.Tests/obj
+      - ${HOST_NUGET_CACHE:?see .env.template — rename to .env and set HOST_NUGET_CACHE to your host NuGet cache path}:/root/.nuget/packages
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "${DB_SERVER_HOSTNAME:-db-hostname-not-configured}:host-gateway"
+    networks:
+      - rif
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./repos/AP.RTLA.Frontend
+      dockerfile: Dockerfile
+    image: ap-rtla-frontend:dev
+    container_name: rif-frontend
+    profiles: ["all", "fe"]
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    environment:
+      VITE_API_MODE: ${VITE_API_MODE:-local}
+      VITE_PROXY_TARGET: ${VITE_PROXY_TARGET:-}
+    volumes:
+      - ./repos/AP.RTLA.Frontend:/app
+      - frontend-node-modules:/app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - rif
+    restart: unless-stopped
+
+networks:
+  rif:
+    driver: bridge
+
+volumes:
+  frontend-node-modules:

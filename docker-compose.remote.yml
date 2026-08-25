@@ -1,0 +1,11 @@
+# Override applied by `npm run docker:remote`. FE runs `npm run dev:remote` inside the container.
+# VITE_PROXY_TARGET is left empty so vite.config falls back to PROXY_TARGETS.remote (Azure).
+
+name: ap-rif-orchestrator
+
+services:
+  frontend:
+    command: ["npm", "run", "dev:remote", "--", "--host", "0.0.0.0", "--port", "5173"]
+    environment:
+      VITE_API_MODE: remote
+      VITE_PROXY_TARGET: ""

@@ -1,0 +1,6 @@
+repos/
+.env
+.env.local
+.env.*.local
+asdd/
+ai-workflow/

@@ -1,0 +1,10 @@
+# Override applied by `npm run docker:local`. FE runs `npm run dev:local` inside the container.
+
+name: ap-rif-orchestrator
+
+services:
+  frontend:
+    command: ["npm", "run", "dev:local", "--", "--host", "0.0.0.0", "--port", "5173"]
+    environment:
+      VITE_API_MODE: local
+      VITE_PROXY_TARGET: http://backend:8080

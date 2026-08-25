@@ -1,0 +1,16 @@
+{
+  "name": "ap-rif-orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dev orchestrator that Dockerizes the repos under ./repos and lets you bring up any subset with one command.",
+  "scripts": {
+    "docker": "docker compose -f docker-compose.yml -f docker-compose.all.yml --profile all up --build",
+    "docker:local": "docker compose -f docker-compose.yml -f docker-compose.local.yml --profile all up --build",
+    "docker:remote": "docker compose -f docker-compose.yml -f docker-compose.remote.yml --profile fe up --build",
+    "docker:be": "docker compose --profile be up --build",
+    "docker:fe": "docker compose --profile fe up --build",
+    "docker:down": "docker compose --profile all --profile be --profile fe down",
+    "docker:migrate": "docker compose --profile be run --rm backend dotnet run --project AP.RTLA.Backend/AP.RTLA.Backend.csproj -- migrate",
+    "docker:logs": "docker compose logs -f"
+  }
+}

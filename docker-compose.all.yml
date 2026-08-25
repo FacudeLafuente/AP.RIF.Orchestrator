@@ -1,0 +1,10 @@
+# Override applied by `npm run docker`. The FE keeps its default CMD (`npm run dev`) and
+# only receives VITE_PROXY_TARGET so the vite dev proxy inside the container can reach the
+# containerized backend (localhost inside the FE container would not).
+
+name: ap-rif-orchestrator
+
+services:
+  frontend:
+    environment:
+      VITE_PROXY_TARGET: http://backend:8080
