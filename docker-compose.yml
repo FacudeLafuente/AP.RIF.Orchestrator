@@ -37,7 +37,7 @@ services:
       - /src/AP.RTLA.Backend.Tests/AP.RTLA.Backend.DAL.Tests/obj
       - /src/AP.RTLA.Backend.Tests/AP.RTLA.Backend.Tests/bin
       - /src/AP.RTLA.Backend.Tests/obj
-      - ${HOST_NUGET_CACHE:?see .env.template — rename to .env and set HOST_NUGET_CACHE to your host NuGet cache path}:/root/.nuget/packages
+      - ${HOST_NUGET_CACHE:?see .env.template — copy it to .env and set HOST_NUGET_CACHE to your host NuGet cache path}:/root/.nuget/packages
     extra_hosts:
       - "host.docker.internal:host-gateway"
       - "${DB_SERVER_HOSTNAME:-db-hostname-not-configured}:host-gateway"
